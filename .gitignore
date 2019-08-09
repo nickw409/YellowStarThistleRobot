@@ -6,3 +6,10 @@ env/
 
 #Ignore logs
 *.log
+
+#Ignore Source Files From Other Languages
+*.c
+*.h
+
+#Ignore CSV Files
+*.csv
