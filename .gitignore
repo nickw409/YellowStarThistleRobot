@@ -1,0 +1,8 @@
+#Ignore python environments
+env/
+
+#Ignore images
+*.jpg
+
+#Ignore logs
+*.log
