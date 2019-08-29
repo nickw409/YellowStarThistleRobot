@@ -45,9 +45,9 @@ def main():
         if startButton.is_pressed:
             testNum += 1
             timeStruct = time.localtime()
-            startTime = "{}-{}-{}_{}:{}:{}".format(timeStruct[1],
+            startTime = "{}-{}-{}T{}{}{}".format(timeStruct[0],
+                                                    timeStruct[1],
                                                     timeStruct[2],
-                                                    timeStruct[0],
                                                     timeStruct[3],
                                                     timeStruct[4],
                                                     timeStruct[5])
