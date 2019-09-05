@@ -35,16 +35,18 @@ def onVoltageRatioChangeHandler(self, voltageRatio):
     with open("phidget_output.csv", 'w') as csvFile:
         writer = csv.writer(csvFile)
         if len(lines) < 1:
-            lines.append(['Time', 'Voltage'])
-        lines.append([current_time, voltageRatio])
+            lines.append(['Time', 'Force'])
+        force = 72101 * voltageRatio - 1.516
+        force = "{0:.2f}".format(force)
+        lines.append([current_time, force])
         writer.writerows(lines)
-        print("voltage: {}\n".format(voltageRatio))
+        print("Force: {} lbs\n".format(force))
 
 
 def main():
     port = "/dev/ttyACM0"
     try:
-        print("Trying Aruino Set Up...")
+        print("Trying Arduino Set Up...")
         s1 = serial.Serial(port, 9600)
         if s1.name == port:
             current_time_struct = time.localtime()
@@ -65,10 +67,10 @@ def main():
                     writer = csv.writer(csvFile)
                     writer.writerows(["Time", "Weight"])
 
-            with open("hx711_output.csv", 'w') as csvFile:
+            with open("hx711_output.csv", 'a') as csvFile:
                 print("Successfully opened CSV file for writing\n")
                 writer = csv.writer(csvFile)
-                while True:
+                while 1:
                     current_time_struct = time.localtime()
                     current_time = '{}:{}:{}'.format(current_time_struct[3],
                                                     current_time_struct[4],
@@ -76,11 +78,14 @@ def main():
 
                     if s1.in_waiting > 0:
                         num_bytes = s1.read(1)
+                        print(num_bytes)
                         weight = s1.read(num_bytes)
-                        writer.writerows([current_time, weight])
+                        print(weight)
+                        #writer.writerows([current_time, weight])
 
     except:
         try:
+            print("Arduino Set Up Failed, Trying Phidget...")
             ch = VoltageRatioInput()
             ch.setOnAttachHandler(onAttachHandler)
             ch.setOnVoltageRatioChangeHandler(onVoltageRatioChangeHandler)
@@ -89,7 +94,7 @@ def main():
             try:
                 print("Waiting for Attachment")
                 ch.openWaitForAttachment(10000)
-                ch.setDataInterval(1000)
+                ch.setDataInterval(10)
             except PhidgetException as e:
                 print("Attachment Timed Out")
 
